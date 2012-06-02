@@ -1,4 +1,6 @@
-﻿using FogCreek.FogBugz;
+﻿using System.Collections;
+using System.Collections.Specialized;
+using FogCreek.FogBugz;
 using FogCreek.FogBugz.Plugins;
 using FogCreek.FogBugz.Plugins.Api;
 using FogCreek.FogBugz.Plugins.Entity;
@@ -23,7 +25,20 @@ namespace FogBugzCategorizer.Plugins
 
 		public CBugDisplayDialogItem[] BugDisplayViewTop(CBug[] rgbug, bool fPublic)
 		{
-			return null;
+			var displayItem = new CBugDisplayDialogItem("BugDisplayViewTop")
+			                  	{
+			                  		sLabel = "Time-Split Categorization",
+									sContent = Forms.SelectInput("ddl", new[]{"BW", "AWI", "USG"})
+			                  	};
+			var displayItem2 = new CBugDisplayDialogItem("BugDisplayViewTop2")
+			                   	{
+									sContent = Forms.SelectOptions(new[] { "BW", "AWI", "USG" })
+			                   	};
+			var submitItem = new CBugDisplayDialogItem("BugDisplayViewTopSubmit")
+			                 	{
+			                 		sContent = Forms.SubmitButton("submit", "Save Splits")
+			                 	};
+			return new[] { displayItem, displayItem2, submitItem };
 		}
 
 		public CBugDisplayDialogItem[] BugDisplayEditLeft(CBug[] rgbug, BugEditMode nMode, bool fPublic)
