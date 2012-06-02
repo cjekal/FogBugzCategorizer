@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FogBugzCategorizer.Plugins", "FogBugzCategorizer.Plugins\FogBugzCategorizer.Plugins.csproj", "{759E75F7-0817-4187-BABE-45B311974D87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.FogBugzCategorizer.Plugins", "Tests.FogBugzCategorizer.Plugins\Tests.FogBugzCategorizer.Plugins.csproj", "{DE6803D7-EE17-4469-B9BE-7A9D610B9482}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{81E6C916-A287-4B5A-944C-3F7A16366E8D}"
+	ProjectSection(SolutionItems) = preProject
+		DeployDev.bat = DeployDev.bat
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{759E75F7-0817-4187-BABE-45B311974D87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{759E75F7-0817-4187-BABE-45B311974D87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{759E75F7-0817-4187-BABE-45B311974D87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{759E75F7-0817-4187-BABE-45B311974D87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE6803D7-EE17-4469-B9BE-7A9D610B9482}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE6803D7-EE17-4469-B9BE-7A9D610B9482}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE6803D7-EE17-4469-B9BE-7A9D610B9482}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE6803D7-EE17-4469-B9BE-7A9D610B9482}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
