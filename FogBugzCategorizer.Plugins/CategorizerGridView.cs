@@ -66,10 +66,10 @@ namespace FogBugzCategorizer.Plugins
             switch (col.iType)
             {
                 case 0:
-                    select = "case when ixbug % 2 = 0 then 'Y' else 'n' end as Split";
+                    select = "'Y' as Split";
                     break;
                 case 1:
-                    select = "ixBug / 500 as Hours";
+                    select = "8.9 as Hours";
                     break;
             }
             gridColumnQuery.AddSelect(select);
@@ -83,10 +83,10 @@ namespace FogBugzCategorizer.Plugins
             switch (col.iType)
             {
                 case 0:
-                    orderby = "case when ixbug % 2 = 0 then 'Y' else 'n' end";
+                    orderby = "bug.ixbug";
                     break;
                 case 1:
-                    orderby = "ixBug / 500";
+                    orderby = "bug.ixBug";
                     break;
             }
             gridColumnQuery.AddOrderBy(string.Format("{0} {1}", orderby, (fDescending ? "DESC" : "ASC")));
