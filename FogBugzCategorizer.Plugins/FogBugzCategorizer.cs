@@ -32,7 +32,7 @@ namespace FogBugzCategorizer.Plugins
 			                  	};
 			var displayItem2 = new CBugDisplayDialogItem("BugDisplayViewTop2")
 			                   	{
-									sContent = Forms.SelectOptions(new[] { "BW", "AWI", "USG" })
+									sContent = Forms.SelectInputString("abc", "abc,def|ghi")
 			                   	};
 			var submitItem = new CBugDisplayDialogItem("BugDisplayViewTopSubmit")
 			                 	{
