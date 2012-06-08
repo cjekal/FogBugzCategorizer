@@ -2,6 +2,7 @@
 using FogCreek.FogBugz;
 using FogCreek.FogBugz.Database;
 using FogCreek.FogBugz.Database.Entity;
+using FogCreek.FogBugz.Plugins;
 using FogCreek.FogBugz.Plugins.Api;
 using FogCreek.FogBugz.Plugins.Entity;
 using FogCreek.FogBugz.Plugins.Interfaces;
@@ -10,9 +11,12 @@ using FogCreek.FogBugz.UI.Dialog;
 
 namespace FogBugzCategorizer.Plugins
 {
-	public partial class CategorizerGridView : FogBugzCategorizerBase, IPluginGridColumn, IPluginDatabase, IPluginBugJoin, IPluginFilterDisplay, IPluginFilterOptions, IPluginFilterJoin, IPluginFilterCommit
+	public partial class CategorizerGridView : Plugin, IPluginGridColumn, IPluginDatabase, IPluginBugJoin, IPluginFilterDisplay, IPluginFilterOptions, IPluginFilterJoin, IPluginFilterCommit
     {
-        public CategorizerGridView(CPluginApi api) : base(api)
+		protected const string PLUGIN_ID = "FogBugzCategorizer@arpc.com";
+
+		public CategorizerGridView(CPluginApi api)
+			: base(api)
         {
         }
 

@@ -7,7 +7,7 @@ using FogCreek.FogBugz.UI.EditableTable;
 
 namespace FogBugzCategorizer.Plugins
 {
-    public partial class CategorizerGridView : IPluginBugDisplay
+	public partial class CategorizerGridView : IPluginBugDisplay
 	{
 		#region Implementation of IPluginBugDisplay
 
