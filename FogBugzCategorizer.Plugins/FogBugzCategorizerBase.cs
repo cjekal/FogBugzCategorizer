@@ -20,7 +20,7 @@ namespace FogBugzCategorizer.Plugins
 		public const string SPLIT_TABLE = "ARPC_SPLIT";
 	}
 
-	public enum HoursFilterType
+	public enum FilterType
 	{
 		Yes,
 		No,

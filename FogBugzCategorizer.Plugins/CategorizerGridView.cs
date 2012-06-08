@@ -16,7 +16,8 @@ namespace FogBugzCategorizer.Plugins
         {
         }
 
-		protected string preCommitHoursSelection = HoursFilterType.Unset.ToString();
+		protected string preCommitHoursSelection = FilterType.Unset.ToString();
+		protected string preCommitSplitSelection = FilterType.Unset.ToString();
 
         #region IPluginGridColumn Members
 
@@ -122,14 +123,14 @@ namespace FogBugzCategorizer.Plugins
 			hasHoursFilterTable.AddVarcharColumn("HoursFilterType", 50, true, "Unset");
 			hasHoursFilterTable.AddAutoIncrementPrimaryKey("Id");
 
-			//CTable hasSplitFilterTable = api.Database.NewTable(api.Database.PluginTableName(Tables.SPLIT_FILTER_TABLE));
-			//hasHoursFilterTable.sDesc = "Save the filter selection for Has Hours?";
-			//hasHoursFilterTable.AddIntColumn("ixFilter", true, 1);
-			//hasHoursFilterTable.AddIntColumn("ixPerson", true, 1);
-			//hasHoursFilterTable.AddVarcharColumn("HoursFilterType", 50, true, "Unset");
-			//hasHoursFilterTable.AddAutoIncrementPrimaryKey("Id");
+			CTable hasSplitFilterTable = api.Database.NewTable(api.Database.PluginTableName(Tables.SPLIT_FILTER_TABLE));
+			hasSplitFilterTable.sDesc = "Save the filter selection for Has Split?";
+			hasSplitFilterTable.AddIntColumn("ixFilter", true, 1);
+			hasSplitFilterTable.AddIntColumn("ixPerson", true, 1);
+			hasSplitFilterTable.AddVarcharColumn("SplitFilterType", 50, true, "Unset");
+			hasSplitFilterTable.AddAutoIncrementPrimaryKey("Id");
 
-			return new[] { hoursTable, splitTable, hasHoursFilterTable };
+			return new[] { hoursTable, splitTable, hasHoursFilterTable, hasSplitFilterTable };
 		}
 
 		public void DatabaseUpgradeBefore(int ixVersionFrom, int ixVersionTo, CDatabaseUpgradeApi apiUpgrade)
@@ -160,7 +161,7 @@ namespace FogBugzCategorizer.Plugins
 
 		public string[] FilterDisplayListFields(CFilter filter)
 		{
-			return new[] {"Has Hours?"};
+			return new[] {"Has Hours?", "Has Split?"};
 		}
 
 		public CDialogItem[] FilterDisplayEdit(CFilter filter)
@@ -179,7 +180,7 @@ namespace FogBugzCategorizer.Plugins
 
 		public string FilterBugEntryUrlParams(CFilter filter)
 		{
-			return api.PluginPrefix + "HoursFilterType=1";
+			return api.PluginPrefix + "HoursFilterType=" + filter.GetPluginField(PLUGIN_ID, "HoursFilterType") + "&SplitFilterType=" + filter.GetPluginField(PLUGIN_ID, "SplitFilterType");
 		}
 
 		#endregion
@@ -193,28 +194,49 @@ namespace FogBugzCategorizer.Plugins
 			hasHoursOption.SetSelectOne(new[]{"Yes", "No"});
 			hasHoursOption.SetDefault(string.Empty);
 			hasHoursOption.sQueryParam = api.PluginPrefix + "HoursFilterType";
-			hasHoursOption.fShowDialogItem = true;
 			hasHoursOption.sHeader = "Has Hours?";
 			hasHoursOption.sName = "hasHours";
-			return new[] {hasHoursOption};
+
+			var hasSplitOption = api.Filter.NewFilterOption();
+			hasSplitOption.fShowDialogItem = true;
+			hasSplitOption.SetSelectOne(new[] {"Yes", "No"});
+			hasSplitOption.SetDefault(string.Empty);
+			hasSplitOption.sQueryParam = api.PluginPrefix + "SplitFilterType";
+			hasSplitOption.sHeader = "Has Split?";
+			hasSplitOption.sName = "hasSplit";
+			return new[] { hasHoursOption, hasSplitOption };
 		}
 
 		public CFilterStringList FilterOptionsString(CFilter filter)
 		{
-			var hasHoursList = new CFilterStringList();
+			var filterList = new CFilterStringList();
 			switch(GetHoursFilterType(filter))
 			{
-				case HoursFilterType.Yes:
-					hasHoursList.Add("Has Hours", "HoursFilterType");
+				case FilterType.Yes:
+					filterList.Add("Has Hours", "HoursFilterType");
 					break;
-				case HoursFilterType.No:
-					hasHoursList.Add("Has No Hours", "HoursFilterType");
+				case FilterType.No:
+					filterList.Add("Has No Hours", "HoursFilterType");
 					break;
-				case HoursFilterType.Unset:
-					hasHoursList.Add(string.Empty, "HoursFilterType");
+				case FilterType.Unset:
+					filterList.Add(string.Empty, "HoursFilterType");
 					break;
 			}
-			return hasHoursList;
+
+			switch(GetSplitFilterType(filter))
+			{
+				case FilterType.Yes:
+					filterList.Add("Has Split", "SplitFilterType");
+					break;
+				case FilterType.No:
+					filterList.Add("Has No Split", "SplitFilterType");
+					break;
+				case FilterType.Unset:
+					filterList.Add(string.Empty, "SplitFilterType");
+					break;
+			}
+
+			return filterList;
 		}
 
 		public CSelectQuery FilterOptionsQuery(CFilter filter)
@@ -223,31 +245,64 @@ namespace FogBugzCategorizer.Plugins
 			var pluginTableName = GetPluginTableName(Tables.HOURS_TABLE);
 			switch(GetHoursFilterType(filter))
 			{
-				case HoursFilterType.Yes:
+				case FilterType.Yes:
 					select.AddLeftJoin(pluginTableName, string.Format("Bug.ixBug = {0}.ixBug", pluginTableName));
 					select.AddWhere(string.Format("{0}.ixBug IS NOT NULL", pluginTableName));
 					break;
-				case HoursFilterType.No:
+				case FilterType.No:
 					select.AddLeftJoin(pluginTableName, string.Format("Bug.ixBug = {0}.ixBug", pluginTableName));
 					select.AddWhere(string.Format("{0}.ixBug IS NULL", pluginTableName));
 					break;
-				//default:
-					//throw new Exception(GetHoursFilterType(filter).ToString());
+			}
+
+			pluginTableName = GetPluginTableName(Tables.SPLIT_TABLE);
+			switch (GetSplitFilterType(filter))
+			{
+				case FilterType.Yes:
+					select.AddLeftJoin(pluginTableName, string.Format("Bug.ixBug = {0}.ixBug", pluginTableName));
+					select.AddWhere(string.Format("{0}.ixBug IS NOT NULL", pluginTableName));
+					break;
+				case FilterType.No:
+					select.AddLeftJoin(pluginTableName, string.Format("Bug.ixBug = {0}.ixBug", pluginTableName));
+					select.AddWhere(string.Format("{0}.ixBug IS NULL", pluginTableName));
+					break;
 			}
 			return select;
 		}
 
 		public string FilterOptionsUrlParams(CFilter filter)
 		{
+			var hours = string.Empty;
 			switch (GetHoursFilterType(filter))
 			{
-				case HoursFilterType.Yes:
-					return api.PluginPrefix + "HoursFilterType=Yes";
-				case HoursFilterType.No:
-					return api.PluginPrefix + "HoursFilterType=No";
-				default:
-					return string.Empty;
+				case FilterType.Yes:
+					hours = api.PluginPrefix + "HoursFilterType=Yes";
+					break;
+				case FilterType.No:
+					hours = api.PluginPrefix + "HoursFilterType=No";
+					break;
 			}
+
+			var split = string.Empty;
+			switch (GetSplitFilterType(filter))
+			{
+				case FilterType.Yes:
+					split = api.PluginPrefix + "SplitFilterType=Yes";
+					break;
+				case FilterType.No:
+					split = api.PluginPrefix + "SplitFilterType=No";
+					break;
+			}
+
+			if (hours == string.Empty)
+			{
+				return split;
+			}
+			if (split == string.Empty)
+			{
+				return hours;
+			}
+			return hours + "&" + split;
 		}
 
 		#endregion
@@ -257,7 +312,7 @@ namespace FogBugzCategorizer.Plugins
 		public string[] FilterJoinTables()
 		{
 			//return null;
-			return new[] {Tables.HOURS_FILTER_TABLE};
+			return new[] {Tables.HOURS_FILTER_TABLE, Tables.SPLIT_FILTER_TABLE};
 		}
 
 		#endregion
@@ -267,13 +322,22 @@ namespace FogBugzCategorizer.Plugins
 			return api.Database.PluginTableName(PLUGIN_ID, tableName);
 		}
 
-		protected virtual HoursFilterType GetHoursFilterType(CFilter filter)
+		protected virtual FilterType GetHoursFilterType(CFilter filter)
 		{
 			if (filter.GetPluginField(PLUGIN_ID, "HoursFilterType") != null)
 			{
-				return (HoursFilterType)Enum.Parse(typeof(HoursFilterType), Convert.ToString(filter.GetPluginField(PLUGIN_ID, "HoursFilterType")));
+				return (FilterType)Enum.Parse(typeof(FilterType), Convert.ToString(filter.GetPluginField(PLUGIN_ID, "HoursFilterType")));
 			}
-			return HoursFilterType.Unset;
+			return FilterType.Unset;
+		}
+
+		protected virtual FilterType GetSplitFilterType(CFilter filter)
+		{
+			if (filter.GetPluginField(PLUGIN_ID, "SplitFilterType") != null)
+			{
+				return (FilterType)Enum.Parse(typeof(FilterType), Convert.ToString(filter.GetPluginField(PLUGIN_ID, "SplitFilterType")));
+			}
+			return FilterType.Unset;
 		}
 
 		#region Implementation of IPluginFilterCommit
@@ -286,17 +350,36 @@ namespace FogBugzCategorizer.Plugins
 				preCommitHoursSelection = pluginField == null ? "Unset" : pluginField.ToString();
 
 				var newValue = api.Request[api.AddPluginPrefix("HoursFilterType")].ToLower();
-				HoursFilterType type = HoursFilterType.Unset;
+				FilterType type = FilterType.Unset;
 				switch (newValue)
 				{
 					case "yes":
-						type = HoursFilterType.Yes;
+						type = FilterType.Yes;
 						break;
 					case "no":
-						type = HoursFilterType.No;
+						type = FilterType.No;
 						break;
 				}
 				filter.SetPluginField(PLUGIN_ID, "HoursFilterType", type.ToString());
+			}
+
+			if (api.Request[api.AddPluginPrefix("SplitFilterType")] != null)
+			{
+				var pluginField = filter.GetPluginField(PLUGIN_ID, "SplitFilterType");
+				preCommitSplitSelection = pluginField == null ? "Unset" : pluginField.ToString();
+
+				var newValue = api.Request[api.AddPluginPrefix("SplitFilterType")].ToLower();
+				FilterType type = FilterType.Unset;
+				switch (newValue)
+				{
+					case "yes":
+						type = FilterType.Yes;
+						break;
+					case "no":
+						type = FilterType.No;
+						break;
+				}
+				filter.SetPluginField(PLUGIN_ID, "SplitFilterType", type.ToString());
 			}
 			return true;
 		}
@@ -308,6 +391,7 @@ namespace FogBugzCategorizer.Plugins
 		public void FilterCommitRollback(CFilter filter)
 		{
 			filter.SetPluginField(PLUGIN_ID, "HoursFilterType", preCommitHoursSelection);
+			filter.SetPluginField(PLUGIN_ID, "SplitFilterType", preCommitSplitSelection);
 		}
 
 		#endregion
