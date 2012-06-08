@@ -10,7 +10,7 @@ using FogCreek.FogBugz.UI.Dialog;
 
 namespace FogBugzCategorizer.Plugins
 {
-	public class CategorizerGridView : FogBugzCategorizerBase, IPluginGridColumn, IPluginDatabase, IPluginBugJoin, IPluginFilterDisplay, IPluginFilterOptions, IPluginFilterJoin, IPluginFilterCommit
+	public partial class CategorizerGridView : FogBugzCategorizerBase, IPluginGridColumn, IPluginDatabase, IPluginBugJoin, IPluginFilterDisplay, IPluginFilterOptions, IPluginFilterJoin, IPluginFilterCommit
     {
         public CategorizerGridView(CPluginApi api) : base(api)
         {

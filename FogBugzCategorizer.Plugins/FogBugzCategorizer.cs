@@ -1,5 +1,4 @@
 ﻿using FogCreek.FogBugz;
-using FogCreek.FogBugz.Plugins.Api;
 using FogCreek.FogBugz.Plugins.Entity;
 using FogCreek.FogBugz.Plugins.Interfaces;
 using FogCreek.FogBugz.UI;
@@ -8,12 +7,8 @@ using FogCreek.FogBugz.UI.EditableTable;
 
 namespace FogBugzCategorizer.Plugins
 {
-    public class FogBugzCategorizer : FogBugzCategorizerBase, IPluginBugDisplay
+    public partial class CategorizerGridView : IPluginBugDisplay
 	{
-		public FogBugzCategorizer(CPluginApi api) : base(api)
-		{
-		}
-
 		#region Implementation of IPluginBugDisplay
 
 		public CBugDisplayDialogItem[] BugDisplayViewLeft(CBug[] rgbug, bool fPublic)

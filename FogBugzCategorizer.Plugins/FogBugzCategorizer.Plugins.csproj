@@ -49,12 +49,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CategorizerGridView.cs" />
+    <Compile Include="FogBugzCategorizer.cs" />
     <Compile Include="FogBugzCategorizerBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"\\arpcqadb\C$\Program Files (x86)\FogBugz\Plugins\examples\_postbuildSln.bat" "$(TargetName)"</PostBuildEvent>
+    <PostBuildEvent>"C:\Program Files (x86)\FogBugz\Plugins\examples\_postbuildSln.bat" "$(TargetName)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
