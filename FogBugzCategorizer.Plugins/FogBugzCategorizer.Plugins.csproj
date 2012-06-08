@@ -48,8 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CategorizerGridView.cs" />
-    <Compile Include="FogBugzCategorizer.cs" />
+    <Compile Include="Categorizer_GridView.cs" />
+    <Compile Include="Categorizer_BugView.cs" />
     <Compile Include="FogBugzCategorizerBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
