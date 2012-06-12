@@ -30,6 +30,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="FogBugz, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9eb54ba6d925add, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -52,11 +55,24 @@
     <Compile Include="Categorizer_BugView.cs" />
     <Compile Include="FilterType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Statics.cs" />
     <Compile Include="Tables.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="static\js\Categorizer.js" />
+    <Content Include="static\js\jquery-1.7.2.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="scripts\Categorizer.coffee" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"C:\Program Files (x86)\FogBugz\Plugins\examples\_postbuildSln.bat" "$(TargetName)"</PostBuildEvent>
+    <PostBuildEvent>xcopy /Y /I /S "$(ProjectDir)static" "$(TargetDir)static"
+"C:\Program Files (x86)\FogBugz\Plugins\examples\_postbuildSln.bat" "$(TargetName)"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>coffee --bare --compile --output "$(ProjectDir)static\js" "$(ProjectDir)scripts"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

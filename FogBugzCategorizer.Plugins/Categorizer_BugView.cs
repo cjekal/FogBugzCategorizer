@@ -1,13 +1,13 @@
-﻿using FogCreek.FogBugz;
+﻿using System.IO;
+using System.Xml;
+using FogCreek.FogBugz;
 using FogCreek.FogBugz.Plugins.Entity;
 using FogCreek.FogBugz.Plugins.Interfaces;
-using FogCreek.FogBugz.UI;
 using FogCreek.FogBugz.UI.Dialog;
-using FogCreek.FogBugz.UI.EditableTable;
 
 namespace FogBugzCategorizer.Plugins
 {
-	public partial class CategorizerGridView : IPluginBugDisplay
+	public partial class CategorizerGridView : IPluginBugDisplay, IPluginJS, IPluginRawPageDisplay
 	{
 		#region Implementation of IPluginBugDisplay
 
@@ -18,31 +18,11 @@ namespace FogBugzCategorizer.Plugins
 
 		public CBugDisplayDialogItem[] BugDisplayViewTop(CBug[] rgbug, bool fPublic)
 		{
-            var table = new CEditableTable("table");
-		    table.Header.AddCell("Project").sWidth = "330px";
-            table.Header.AddCell("Task").sWidth = "330px";
-            
-		    var row = new CEditableTableRow();
-		    row.AddCell(Forms.SelectInput("project", new[] {"Project 1", "Project 2", "Project 3"}));
-            row.AddCell(Forms.SelectInput("task", new[] { "Task 1", "Task 2", "Task 3" }));
-		    table.Body.AddRow(row);
-
-            table.Footer.AddCell(CEditableTable.LinkShowDialogNewIcon(table.sId, "dlgAdd", "footer", string.Concat(rgbug[0].BugLink(), "&newSplit=1")));
-            table.Footer.AddCell(CEditableTable.LinkShowDialog(table.sId, "dlgAdd", "footer", string.Concat(rgbug[0].BugLink(), "&newSplit=1"), "Add New Split"));
-
-            var dialog = new CSingleColumnDialog { sTitle = "Add New Split" };
-            dialog.Items.Add(new CDialogItem(Forms.CheckboxInput("checkbox", "Check Yes Or No", false)));
-            dialog.Items.Add(CEditableTable.DialogItemOkCancel(table.sId));
-
-		    var templateNew = new CDialogTemplate {Template = dialog};
-		    table.AddDialogTemplate("dlgAdd", templateNew);
-
-            var displayItem = new CBugDisplayDialogItem("BugDisplayViewTop")
+			var displayItem = new CBugDisplayDialogItem("BugDisplayViewTop")
             {
-                sLabel = "Time-Split Categorization",
-                iColumnSpan = 4,
-                sContent = table.RenderHtml()
-            };
+				iColumnSpan = 4,
+                sContent = @"<a id=""Categorizer"" href="""">Categorizer</a><div id=""CategorizerDiv""></div>"
+			};
 
 			return new[] { displayItem };
 		}
@@ -58,5 +38,59 @@ namespace FogBugzCategorizer.Plugins
 		}
 
 		#endregion
+
+		#region Implementation of IPluginJS
+
+		public CJSInfo JSInfo()
+		{
+			var jsInfo = new CJSInfo { rgsStaticFiles = new[] { Statics.JQuery, Statics.Categorizer }, sInlineJS = GetCategorizerScript() };
+			return jsInfo;
+		}
+
+		private string GetCategorizerScript()
+		{
+			return string.Format(@"
+var settings = {{
+	url: '{0}'
+}};
+", api.Url.PluginRawPageUrl(PLUGIN_ID));
+		}
+
+		#endregion
+
+		#region Implementation of IPluginRawPageDisplay
+
+		public string RawPageDisplay()
+		{
+			var xml = new XmlDocument();
+			var declaration = xml.CreateNode(XmlNodeType.XmlDeclaration, null, null);
+			xml.AppendChild(declaration);
+
+			var root = xml.CreateElement("projects");
+			xml.AppendChild(root);
+
+			CreateProjectElement(root, "project 1");
+			CreateProjectElement(root, "project 2");
+			CreateProjectElement(root, "project 3");
+
+			StringWriter writer = new StringWriter();
+			xml.WriteTo(new XmlTextWriter(writer));
+			return writer.ToString();
+		}
+
+		public PermissionLevel RawPageVisibility()
+		{
+			return PermissionLevel.Normal;
+		}
+
+		#endregion
+
+		private XmlElement CreateProjectElement(XmlElement projects, string projectName)
+		{
+			var project = projects.OwnerDocument.CreateElement("project");
+			project.SetAttribute("name", projectName);
+			projects.AppendChild(project);
+			return project;
+		}
 	}
 }
