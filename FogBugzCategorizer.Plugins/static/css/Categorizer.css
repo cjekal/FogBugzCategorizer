@@ -1,0 +1,36 @@
+﻿div.categorizerContainer {
+	width: 500px;
+	height: 500px;
+	background-color: gray;
+	position: relative;
+}
+
+div.categorizerContent {
+	width: 235px;
+	height: 235px;
+	background-color: white;
+}
+
+div.categorizerSelected {
+	width: 480px;
+	height: 235px;
+	background-color: white;
+}
+
+div.categorizerLeft {
+	position:absolute;
+	top: 10px;
+	left: 10px;
+}
+
+div.categorizerRight {
+	position:absolute;
+	top: 10px;
+	right: 10px;
+}
+
+div.categorizerBottom {
+	position:absolute;
+	bottom: 10px;
+	left: 10px;
+}

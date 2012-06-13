@@ -1,5 +1,5 @@
-﻿using System.IO;
-using System.Xml;
+﻿using System.Collections.Generic;
+using FogCreek.Core;
 using FogCreek.FogBugz;
 using FogCreek.FogBugz.Plugins.Entity;
 using FogCreek.FogBugz.Plugins.Interfaces;
@@ -7,7 +7,7 @@ using FogCreek.FogBugz.UI.Dialog;
 
 namespace FogBugzCategorizer.Plugins
 {
-	public partial class CategorizerGridView : IPluginBugDisplay, IPluginJS, IPluginRawPageDisplay
+	public partial class CategorizerGridView : IPluginBugDisplay, IPluginJS, IPluginRawPageDisplay, IPluginCSS
 	{
 		#region Implementation of IPluginBugDisplay
 
@@ -21,7 +21,13 @@ namespace FogBugzCategorizer.Plugins
 			var displayItem = new CBugDisplayDialogItem("BugDisplayViewTop")
             {
 				iColumnSpan = 4,
-                sContent = @"<a id=""Categorizer"" href="""">Categorizer</a><div id=""CategorizerDiv""></div>"
+                sContent = @"
+<a id=""Categorizer"" href="""">Categorizer</a>
+<div id=""CategorizerDiv"" class=""categorizerContainer"" style=""display: none;"">
+	<div id=""CategorizerProjects"" class=""categorizerContent categorizerLeft""></div>
+	<div id=""CategorizerTasks"" class=""categorizerContent categorizerRight""></div>
+	<div id=""SelectedCategories"" class=""categorizerSelected categorizerBottom""></div>
+</div>"
 			};
 
 			return new[] { displayItem };
@@ -43,7 +49,11 @@ namespace FogBugzCategorizer.Plugins
 
 		public CJSInfo JSInfo()
 		{
-			var jsInfo = new CJSInfo { rgsStaticFiles = new[] { Statics.JQuery, Statics.Categorizer }, sInlineJS = GetCategorizerScript() };
+			var jsInfo = new CJSInfo
+			             	{
+			             		rgsStaticFiles = new[] {Statics.JQuery, Statics.CategorizerJS},
+			             		sInlineJS = GetCategorizerScript()
+			             	};
 			return jsInfo;
 		}
 
@@ -62,20 +72,36 @@ var settings = {{
 
 		public string RawPageDisplay()
 		{
-			var xml = new XmlDocument();
-			var declaration = xml.CreateNode(XmlNodeType.XmlDeclaration, null, null);
-			xml.AppendChild(declaration);
+			if (api.Request["Command"] == "GetProjects")
+			{
+				var projects = new List<Project>
+			                         	{
+			                         		new Project {Name = "Project 1"},
+			                         		new Project {Name = "Project 2"},
+			                         		new Project {Name = "Project 3"},
+			                         	};
+				return Json.Serialize(projects);
+			}
 
-			var root = xml.CreateElement("projects");
-			xml.AppendChild(root);
+			if (api.Request["Command"] == "GetTasks")
+			{
+				string projectName = api.Request["Project"];
+				Project project = new Project {Name = projectName};
+				if (projectName == null)
+				{
+					return null;
+				}
 
-			CreateProjectElement(root, "project 1");
-			CreateProjectElement(root, "project 2");
-			CreateProjectElement(root, "project 3");
+				var tasks = new List<Task>
+				            	{
+				            		new Task {Name = "Task 1", Project = project},
+				            		new Task {Name = "Task 2", Project = project},
+				            		new Task {Name = "Task 3", Project = project}
+				            	};
+				return Json.Serialize(tasks);
+			}
 
-			StringWriter writer = new StringWriter();
-			xml.WriteTo(new XmlTextWriter(writer));
-			return writer.ToString();
+			return null;
 		}
 
 		public PermissionLevel RawPageVisibility()
@@ -85,12 +111,13 @@ var settings = {{
 
 		#endregion
 
-		private XmlElement CreateProjectElement(XmlElement projects, string projectName)
+		#region Implementation of IPluginCSS
+
+		public CCSSInfo CSSInfo()
 		{
-			var project = projects.OwnerDocument.CreateElement("project");
-			project.SetAttribute("name", projectName);
-			projects.AppendChild(project);
-			return project;
+			return new CCSSInfo {rgsStaticFiles = new[] {Statics.CategorizerCSS}};
 		}
+
+		#endregion
 	}
 }

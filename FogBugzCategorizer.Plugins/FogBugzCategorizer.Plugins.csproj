@@ -54,12 +54,15 @@
     <Compile Include="Categorizer_GridView.cs" />
     <Compile Include="Categorizer_BugView.cs" />
     <Compile Include="FilterType.cs" />
+    <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="Tables.cs" />
+    <Compile Include="Task.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="static\css\Categorizer.css" />
     <Content Include="static\js\Categorizer.js" />
     <Content Include="static\js\jquery-1.7.2.min.js" />
   </ItemGroup>
