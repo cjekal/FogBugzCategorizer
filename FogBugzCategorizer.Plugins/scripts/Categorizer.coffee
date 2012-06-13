@@ -56,7 +56,10 @@ createTaskItem = (task) ->
 	div = $('<div />')
 	div.html(task.Name).click (e) ->
 		e.preventDefault()
-		addSelectedTask $(this), task
+		if ($('#SelectedCategories div').filter( ->
+			$(this).text() == getProjectTaskText(task)
+		).length < 1)
+			addSelectedTask $(this), task
 	div
 
 addSelectedTask = (taskObj, task) ->
@@ -65,8 +68,11 @@ addSelectedTask = (taskObj, task) ->
 
 createSelectedProjectTask = (taskObj, task) ->
 	div = $('<div />')
-	div.html("#{task.Project.Name}: #{task.Name}").click (e) ->
+	div.html(getProjectTaskText(task)).click (e) ->
 		e.preventDefault()
 		$(this).hide()
 		taskObj.show()
 	div.appendTo('#SelectedCategories')
+
+getProjectTaskText = (task) ->
+	return "#{task.Project.Name}: #{task.Name}"
