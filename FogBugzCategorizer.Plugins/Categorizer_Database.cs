@@ -4,7 +4,7 @@ using FogCreek.FogBugz.Plugins.Interfaces;
 
 namespace FogBugzCategorizer.Plugins
 {
-	public partial class CategorizerGridView : IPluginDatabase, IPluginBugJoin, IPluginFilterJoin
+	public partial class Categorizer : IPluginDatabase, IPluginBugJoin, IPluginFilterJoin
 	{
 		#region Implementation of IPluginDatabase
 

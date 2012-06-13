@@ -7,7 +7,7 @@ using FogCreek.FogBugz.UI.Dialog;
 
 namespace FogBugzCategorizer.Plugins
 {
-	public partial class CategorizerGridView : IPluginBugDisplay, IPluginJS, IPluginRawPageDisplay, IPluginCSS
+	public partial class Categorizer : IPluginBugDisplay, IPluginJS, IPluginRawPageDisplay, IPluginCSS
 	{
 		#region Implementation of IPluginBugDisplay
 

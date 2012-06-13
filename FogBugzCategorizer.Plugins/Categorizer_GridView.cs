@@ -11,11 +11,11 @@ using FogCreek.FogBugz.UI.Dialog;
 
 namespace FogBugzCategorizer.Plugins
 {
-	public partial class CategorizerGridView : Plugin, IPluginGridColumn, IPluginFilterDisplay, IPluginFilterOptions, IPluginFilterCommit
+	public partial class Categorizer : Plugin, IPluginGridColumn, IPluginFilterDisplay, IPluginFilterOptions, IPluginFilterCommit
     {
 		protected const string PLUGIN_ID = "FogBugzCategorizer@arpc.com";
 
-		public CategorizerGridView(CPluginApi api)
+		public Categorizer(CPluginApi api)
 			: base(api)
         {
         }
