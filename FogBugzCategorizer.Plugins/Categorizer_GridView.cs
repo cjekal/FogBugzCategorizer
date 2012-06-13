@@ -89,7 +89,7 @@ namespace FogBugzCategorizer.Plugins
             		tableName = Tables.SPLIT_TABLE;
             		break;
             }
-        	var pluginTableName = api.Database.PluginTableName(tableName);
+        	var pluginTableName = GetPluginTableName(tableName);
 			gridColumnQuery.AddOrderBy(string.Format("{0}.{1} {2}", pluginTableName, orderByColumn, fDescending ? "DESC" : "ASC"));
             return gridColumnQuery;
         }

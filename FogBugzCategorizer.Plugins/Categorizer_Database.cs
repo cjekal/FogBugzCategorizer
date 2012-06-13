@@ -15,26 +15,26 @@ namespace FogBugzCategorizer.Plugins
 
 		public CTable[] DatabaseSchema()
 		{
-			CTable hoursTable = api.Database.NewTable(api.Database.PluginTableName(Tables.HOURS_TABLE));
+			CTable hoursTable = api.Database.NewTable(GetPluginTableName(Tables.HOURS_TABLE));
 			hoursTable.sDesc = "Hours billed to case";
 			hoursTable.AddIntColumn("ixBug", true, 2);
 			hoursTable.AddFloatColumn("Hours", true, 0);
 			hoursTable.AddAutoIncrementPrimaryKey("Id");
 
-			CTable splitTable = api.Database.NewTable(api.Database.PluginTableName(Tables.SPLIT_TABLE));
+			CTable splitTable = api.Database.NewTable(GetPluginTableName(Tables.SPLIT_TABLE));
 			splitTable.sDesc = "Categorization status for case";
 			splitTable.AddIntColumn("ixBug", true, 2);
 			splitTable.AddVarcharColumn("LastEditor", 255, false);
 			splitTable.AddAutoIncrementPrimaryKey("Id");
 
-			CTable hasHoursFilterTable = api.Database.NewTable(api.Database.PluginTableName(Tables.HOURS_FILTER_TABLE));
+			CTable hasHoursFilterTable = api.Database.NewTable(GetPluginTableName(Tables.HOURS_FILTER_TABLE));
 			hasHoursFilterTable.sDesc = "Save the filter selection for Has Hours?";
 			hasHoursFilterTable.AddIntColumn("ixFilter", true, 1);
 			hasHoursFilterTable.AddIntColumn("ixPerson", true, 1);
 			hasHoursFilterTable.AddVarcharColumn("HoursFilterType", 50, true, "Unset");
 			hasHoursFilterTable.AddAutoIncrementPrimaryKey("Id");
 
-			CTable hasSplitFilterTable = api.Database.NewTable(api.Database.PluginTableName(Tables.SPLIT_FILTER_TABLE));
+			CTable hasSplitFilterTable = api.Database.NewTable(GetPluginTableName(Tables.SPLIT_FILTER_TABLE));
 			hasSplitFilterTable.sDesc = "Save the filter selection for Has Split?";
 			hasSplitFilterTable.AddIntColumn("ixFilter", true, 1);
 			hasSplitFilterTable.AddIntColumn("ixPerson", true, 1);
