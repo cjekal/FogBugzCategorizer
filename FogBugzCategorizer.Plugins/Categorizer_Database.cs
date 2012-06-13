@@ -41,7 +41,20 @@ namespace FogBugzCategorizer.Plugins
 			hasSplitFilterTable.AddVarcharColumn("SplitFilterType", 50, true, "Unset");
 			hasSplitFilterTable.AddAutoIncrementPrimaryKey("Id");
 
-			return new[] { hoursTable, splitTable, hasHoursFilterTable, hasSplitFilterTable };
+			CTable projectTaskLookup = api.Database.NewTable(GetPluginTableName(Tables.PROJECT_TASK_LOOKUP));
+			projectTaskLookup.sDesc = "Lists the possible Project/Task combinations";
+			projectTaskLookup.AddVarcharColumn("Project", 255, false);
+			projectTaskLookup.AddVarcharColumn("Task", 255, false);
+			projectTaskLookup.AddAutoIncrementPrimaryKey("Id");
+
+			CTable splitDetailsTable = api.Database.NewTable(GetPluginTableName(Tables.SPLIT_DETAILS_TABLE));
+			splitDetailsTable.sDesc = "Categorization project and task for case";
+			splitDetailsTable.AddIntColumn("SplitId", false);
+			splitDetailsTable.AddVarcharColumn("Project", 255, false);
+			splitDetailsTable.AddVarcharColumn("Task", 255, false);
+			splitDetailsTable.AddAutoIncrementPrimaryKey("Id");
+
+			return new[] { hoursTable, splitTable, hasHoursFilterTable, hasSplitFilterTable, projectTaskLookup, splitDetailsTable };
 		}
 
 		public void DatabaseUpgradeBefore(int ixVersionFrom, int ixVersionTo, CDatabaseUpgradeApi apiUpgrade)

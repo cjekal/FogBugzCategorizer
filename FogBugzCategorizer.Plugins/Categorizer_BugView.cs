@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
-using FogCreek.Core;
+using System.Data;
 using FogCreek.FogBugz;
 using FogCreek.FogBugz.Plugins.Entity;
 using FogCreek.FogBugz.Plugins.Interfaces;
 using FogCreek.FogBugz.UI.Dialog;
+using Newtonsoft.Json;
 
 namespace FogBugzCategorizer.Plugins
 {
@@ -27,6 +28,7 @@ namespace FogBugzCategorizer.Plugins
 	<div id=""CategorizerProjects"" class=""categorizerContent categorizerLeft""></div>
 	<div id=""CategorizerTasks"" class=""categorizerContent categorizerRight""></div>
 	<div id=""SelectedCategories"" class=""categorizerSelected categorizerBottom""></div>
+	<a id=""CategorizerSave"" href="""">Save Selections</a>
 </div>"
 			};
 
@@ -72,33 +74,90 @@ var settings = {{
 
 		public string RawPageDisplay()
 		{
+			var projectTaskLookupTableName = GetPluginTableName(Tables.PROJECT_TASK_LOOKUP);
+
 			if (api.Request["Command"] == "GetProjects")
 			{
-				var projects = new List<Project>
-			                         	{
-			                         		new Project {Name = "Project 1"},
-			                         		new Project {Name = "Project 2"},
-			                         		new Project {Name = "Project 3"},
-			                         	};
-				return Json.Serialize(projects);
+				var projectsQuery = api.Database.NewSelectQuery(projectTaskLookupTableName);
+				projectsQuery.AddSelect(string.Format("distinct {0}.Project", projectTaskLookupTableName));
+				var projectsData = projectsQuery.GetDataSet();
+
+				if (projectsData.Tables[0].Rows.Count == 0)
+				{
+					return null;
+				}
+
+				var projects = new List<Project>(projectsData.Tables[0].AsEnumerable().Select(r => new Project { Name = r.Field<string>("Project") }));
+
+				return JsonConvert.SerializeObject(projects);
 			}
 
 			if (api.Request["Command"] == "GetTasks")
 			{
 				string projectName = api.Request["Project"];
 				Project project = new Project {Name = projectName};
-				if (projectName == null)
+				if (string.IsNullOrEmpty(projectName))
 				{
 					return null;
 				}
 
-				var tasks = new List<Task>
-				            	{
-				            		new Task {Name = "Task 1", Project = project},
-				            		new Task {Name = "Task 2", Project = project},
-				            		new Task {Name = "Task 3", Project = project}
-				            	};
-				return Json.Serialize(tasks);
+				var tasksQuery = api.Database.NewSelectQuery(projectTaskLookupTableName);
+				tasksQuery.AddSelect(string.Format("distinct {0}.Task", projectTaskLookupTableName));
+				tasksQuery.AddWhere(string.Format("{0}.Project = '{1}'", projectTaskLookupTableName, projectName));
+				var tasksData = tasksQuery.GetDataSet();
+
+				if (tasksData.Tables[0].Rows.Count == 0)
+				{
+					return null;
+				}
+
+				var tasks = new List<Task>(tasksData.Tables[0].AsEnumerable().Select(r => new Task { Name = r.Field<string>("Task"), Project = project }));
+
+				return JsonConvert.SerializeObject(tasks);
+			}
+
+			if (api.Request["Command"] == "SaveCategories")
+			{
+				string categories = api.Request["Categories"];
+				if (string.IsNullOrEmpty(categories))
+				{
+					return null;
+				}
+
+				var bugId = api.Bug.CurrentBug();
+				var userName = api.Person.GetCurrentPerson().sFullName;
+				var splitTableName = GetPluginTableName(Tables.SPLIT_TABLE);
+				var splitDetailsTableName = GetPluginTableName(Tables.SPLIT_DETAILS_TABLE);
+
+				var splitQuery = api.Database.NewSelectQuery(splitTableName);
+				splitQuery.AddWhere(string.Format("{0}.ixBug = {1}", splitTableName, bugId));
+				var splitData = splitQuery.GetDataSet();
+
+				int splitId;
+				if (splitData.Tables[0].Rows.Count == 0)
+				{
+					var insertSplitQuery = api.Database.NewInsertQuery(splitTableName);
+					insertSplitQuery.InsertInt("ixBug", bugId);
+					insertSplitQuery.InsertString("LastEditor", userName);
+					splitId = insertSplitQuery.Execute();
+				}
+				else
+				{
+					splitId = splitData.Tables[0].Rows[0].Field<int>("Id");
+					var deleteAllSplitDetailsQuery = api.Database.NewDeleteQuery(splitDetailsTableName);
+					deleteAllSplitDetailsQuery.AddWhere(string.Format("{0}.SplitId = {1}", splitDetailsTableName, splitId));
+					deleteAllSplitDetailsQuery.Execute();
+				}
+
+				var tasks = JsonConvert.DeserializeObject<List<Task>>(categories);
+				foreach(var task in tasks)
+				{
+					var taskInsertQuery = api.Database.NewInsertQuery(splitDetailsTableName);
+					taskInsertQuery.InsertInt("SplitId", splitId);
+					taskInsertQuery.InsertString("Project", task.Project.Name);
+					taskInsertQuery.InsertString("Task", task.Name);
+					taskInsertQuery.Execute();
+				}
 			}
 
 			return null;

@@ -1,4 +1,5 @@
 ﻿using System;
+using FogCreek.Core;
 using FogCreek.FogBugz;
 using FogCreek.FogBugz.Database;
 using FogCreek.FogBugz.Database.Entity;
@@ -6,7 +7,6 @@ using FogCreek.FogBugz.Plugins;
 using FogCreek.FogBugz.Plugins.Api;
 using FogCreek.FogBugz.Plugins.Entity;
 using FogCreek.FogBugz.Plugins.Interfaces;
-using System.Web;
 using FogCreek.FogBugz.UI.Dialog;
 
 namespace FogBugzCategorizer.Plugins
@@ -57,7 +57,7 @@ namespace FogBugzCategorizer.Plugins
 
 				if (col.iType == 0)
 				{
-					valuesAsStrings[i] = (value == null) ? string.Empty : HttpUtility.HtmlEncode(Convert.ToDecimal(value).ToString("#,###.0"));
+					valuesAsStrings[i] = (value == null) ? string.Empty : Html.Encode(Convert.ToDecimal(value).ToString("#,###.0"));
 				}
 				else
 				{

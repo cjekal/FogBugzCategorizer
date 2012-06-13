@@ -11,6 +11,14 @@
 		if ($('#CategorizerDiv').is(':visible'))
 			createProjects()
 
+	$('#CategorizerSave').click (e) ->
+		e.preventDefault()
+		$.ajax(settings.url,
+			data:
+				Command: 'SaveCategories'
+				Categories: getSelectedCategories()
+		)
+
 createProjects = ->
 	data = $('#CategorizerDiv').data('projects')
 	if (data)
@@ -57,7 +65,7 @@ createTaskItem = (task) ->
 	div.html(task.Name).click (e) ->
 		e.preventDefault()
 		if ($('#SelectedCategories div').filter( ->
-			$(this).text() == getProjectTaskText(task)
+			$(this).text() == getProjectTaskText(task) && $(this).is(':visible')
 		).length < 1)
 			addSelectedTask $(this), task
 	div
@@ -68,6 +76,7 @@ addSelectedTask = (taskObj, task) ->
 
 createSelectedProjectTask = (taskObj, task) ->
 	div = $('<div />')
+	div.data('task', task)
 	div.html(getProjectTaskText(task)).click (e) ->
 		e.preventDefault()
 		$(this).hide()
@@ -76,3 +85,7 @@ createSelectedProjectTask = (taskObj, task) ->
 
 getProjectTaskText = (task) ->
 	return "#{task.Project.Name}: #{task.Name}"
+
+getSelectedCategories = ->
+	return $('#SelectedCategories div').map ->
+		return $(this).data('task')
