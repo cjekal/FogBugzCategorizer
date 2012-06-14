@@ -65,7 +65,6 @@
   <ItemGroup>
     <Content Include="static\css\Categorizer.css" />
     <Content Include="static\js\Categorizer.js" />
-    <Content Include="static\js\jquery-1.7.2.min.js" />
   </ItemGroup>
   <ItemGroup>
     <None Include="scripts\Categorizer.coffee" />
