@@ -42,8 +42,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libraries\FogBugz\FogCreek.Plugins.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\Libraries\JSON.NET\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json.Net20">
+      <HintPath>..\Libraries\JSON.NET\Newtonsoft.Json.Net20.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data.DataSetExtensions" />
