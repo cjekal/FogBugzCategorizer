@@ -53,7 +53,7 @@ namespace FogBugzCategorizer.Plugins
 		{
 			var jsInfo = new CJSInfo
 			             	{
-			             		rgsStaticFiles = new[] {Statics.JQuery, Statics.CategorizerJS},
+			             		rgsStaticFiles = new[] {Statics.CategorizerJS},
 			             		sInlineJS = GetCategorizerScript()
 			             	};
 			return jsInfo;
