@@ -79,7 +79,8 @@ var settings = {{
 			if (api.Request["Command"] == "GetProjects")
 			{
 				var projectsQuery = api.Database.NewSelectQuery(projectTaskLookupTableName);
-				projectsQuery.AddSelect(string.Format("distinct {0}.Project", projectTaskLookupTableName));
+				projectsQuery.AddSelect(string.Format("{0}.Project", projectTaskLookupTableName));
+				projectsQuery.AddOrderBy(string.Format("{0}.Project ASC", projectTaskLookupTableName));
 				var projectsData = projectsQuery.GetDataSet();
 
 				if (projectsData.Tables[0].Rows.Count == 0)
@@ -87,7 +88,7 @@ var settings = {{
 					return null;
 				}
 
-				var projects = new List<Project>(projectsData.Tables[0].AsEnumerable().Select(r => new Project { Name = r.Field<string>("Project") }));
+				var projects = new List<Project>(projectsData.Tables[0].AsEnumerable().Select(r => r.Field<string>("Project")).Distinct().Select(p => new Project{Name = p}));
 
 				return JsonConvert.SerializeObject(projects);
 			}
@@ -102,8 +103,9 @@ var settings = {{
 				}
 
 				var tasksQuery = api.Database.NewSelectQuery(projectTaskLookupTableName);
-				tasksQuery.AddSelect(string.Format("distinct {0}.Task", projectTaskLookupTableName));
+				tasksQuery.AddSelect(string.Format("{0}.Task", projectTaskLookupTableName));
 				tasksQuery.AddWhere(string.Format("{0}.Project = '{1}'", projectTaskLookupTableName, projectName));
+				tasksQuery.AddOrderBy(string.Format("{0}.Task ASC", projectTaskLookupTableName));
 				var tasksData = tasksQuery.GetDataSet();
 
 				if (tasksData.Tables[0].Rows.Count == 0)
@@ -111,7 +113,7 @@ var settings = {{
 					return null;
 				}
 
-				var tasks = new List<Task>(tasksData.Tables[0].AsEnumerable().Select(r => new Task { Name = r.Field<string>("Task"), Project = project }));
+				var tasks = new List<Task>(tasksData.Tables[0].AsEnumerable().Select(r => r.Field<string>("Task")).Distinct().Select(t => new Task { Name = t, Project = project }));
 
 				return JsonConvert.SerializeObject(tasks);
 			}
