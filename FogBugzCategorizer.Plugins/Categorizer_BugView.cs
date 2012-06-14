@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using FogCreek.Core;
 using FogCreek.FogBugz;
 using FogCreek.FogBugz.Plugins.Entity;
 using FogCreek.FogBugz.Plugins.Interfaces;
@@ -57,15 +59,6 @@ namespace FogBugzCategorizer.Plugins
 			             		sInlineJS = GetCategorizerScript()
 			             	};
 			return jsInfo;
-		}
-
-		private string GetCategorizerScript()
-		{
-			return string.Format(@"
-var settings = {{
-	url: '{0}'
-}};
-", api.Url.PluginRawPageUrl(PLUGIN_ID));
 		}
 
 		#endregion
@@ -187,5 +180,14 @@ var settings = {{
 		}
 
 		#endregion
+
+		private string GetCategorizerScript()
+		{
+			return string.Format(@"
+var settings = {{
+	url: '{0}'
+}};
+", api.Url.PluginRawPageUrl(PLUGIN_ID));
+		}
 	}
 }
