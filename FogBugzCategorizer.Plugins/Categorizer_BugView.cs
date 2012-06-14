@@ -145,6 +145,11 @@ var settings = {{
 				}
 				else
 				{
+					var updateSplitQuery = api.Database.NewUpdateQuery(splitTableName);
+					updateSplitQuery.UpdateString("LastEditor", userName);
+					updateSplitQuery.AddWhere(string.Format("{0}.ixBug = {1}", splitTableName, bugId));
+					updateSplitQuery.Execute();
+
 					splitId = splitData.Tables[0].Rows[0].Field<int>("Id");
 					var deleteAllSplitDetailsQuery = api.Database.NewDeleteQuery(splitDetailsTableName);
 					deleteAllSplitDetailsQuery.AddWhere(string.Format("{0}.SplitId = {1}", splitDetailsTableName, splitId));
