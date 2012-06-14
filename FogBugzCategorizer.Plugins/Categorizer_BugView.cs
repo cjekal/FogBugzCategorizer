@@ -95,7 +95,7 @@ var settings = {{
 
 			if (api.Request["Command"] == "GetTasks")
 			{
-				string projectName = api.Request["Project"];
+				string projectName = Html.HtmlDecode(api.Request["Project"]);
 				Project project = new Project {Name = projectName};
 				if (string.IsNullOrEmpty(projectName))
 				{
