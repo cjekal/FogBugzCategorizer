@@ -5,6 +5,7 @@ var addSelectedTask, createProjectItem, createProjects, createSelectedProjectTas
   $.ajaxSetup({
     cache: false
   });
+  console.log("jQuery version: " + ($().jquery));
   $('#CategorizerDiv').hide();
   $('#Categorizer').click(function(e) {
     e.preventDefault();
@@ -15,10 +16,17 @@ var addSelectedTask, createProjectItem, createProjects, createSelectedProjectTas
   });
   return $('#CategorizerSave').click(function(e) {
     e.preventDefault();
-    return $.ajax(settings.url, {
-      data: {
+    return $.ajax({
+      type: 'POST',
+      url: settings.url,
+      data: JSON.stringify({
         Command: 'SaveCategories',
         Categories: getSelectedCategories()
+      }),
+      contentType: "application/json; charset=utf-8",
+      dataType: 'json',
+      success: function(result) {
+        return console.log("finished saving categories, got result: " + result);
       }
     });
   });
@@ -111,7 +119,10 @@ getProjectTaskText = function(task) {
 };
 
 getSelectedCategories = function() {
-  return $('#SelectedCategories div').map(function() {
-    return $(this).data('task');
+  var categories;
+  categories = [];
+  $('#SelectedCategories div').each(function() {
+    return categories.push($(this).data('task'));
   });
+  return categories;
 };

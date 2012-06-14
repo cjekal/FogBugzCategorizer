@@ -120,7 +120,7 @@ var settings = {{
 
 			if (api.Request["Command"] == "SaveCategories")
 			{
-				string categories = api.Request["Categories"];
+				string categories = Html.HtmlDecode(api.Request.RawPost());
 				if (string.IsNullOrEmpty(categories))
 				{
 					return null;
@@ -165,6 +165,8 @@ var settings = {{
 					taskInsertQuery.InsertString("Task", task.Name);
 					taskInsertQuery.Execute();
 				}
+
+				return "yay, done updating!";
 			}
 
 			return null;

@@ -3,6 +3,8 @@
 		cache: false
 	)
 
+	console.log "jQuery version: #{$().jquery}"
+
 	$('#CategorizerDiv').hide()
 
 	$('#Categorizer').click (e) ->
@@ -13,10 +15,17 @@
 
 	$('#CategorizerSave').click (e) ->
 		e.preventDefault()
-		$.ajax(settings.url,
-			data:
+		$.ajax(
+			type: 'POST',
+			url: settings.url,
+			data: JSON.stringify(
 				Command: 'SaveCategories'
 				Categories: getSelectedCategories()
+			),
+			contentType: "application/json; charset=utf-8",
+			dataType: 'json',
+			success: (result) ->
+				console.log "finished saving categories, got result: #{result}"
 		)
 
 createProjects = ->
@@ -87,5 +96,7 @@ getProjectTaskText = (task) ->
 	return "#{task.Project.Name}: #{task.Name}"
 
 getSelectedCategories = ->
-	return $('#SelectedCategories div').map ->
-		return $(this).data('task')
+	categories = []
+	$('#SelectedCategories div').each ->
+		categories.push($(this).data('task'))
+	return categories
