@@ -54,14 +54,14 @@
     <Compile Include="Categorizer_Database.cs" />
     <Compile Include="Categorizer_GridView.cs" />
     <Compile Include="Categorizer_BugView.cs" />
-    <Compile Include="FilterType.cs" />
-    <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Statics.cs" />
-    <Compile Include="Tables.cs" />
-    <Compile Include="Task.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\FogBugz.Categorizer.Plugins.Business\FogBugz.Categorizer.Plugins.Business.csproj">
+      <Project>{D5D76BD4-2D3B-4410-9B35-821E42B7033B}</Project>
+      <Name>FogBugz.Categorizer.Plugins.Business</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="static\css\Categorizer.css" />
     <Content Include="static\js\Categorizer.js" />

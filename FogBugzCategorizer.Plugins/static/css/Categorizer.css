@@ -38,3 +38,49 @@ div.categorizerBottom {
 	margin-right: 10px;
 	margin-bottom: 10px;
 }
+
+div.categorizerNotifications {
+	width: 480px;
+	height: auto;
+	background-color: yellow;
+	font-weight: bolder;
+}
+
+div.categorizerNotificationsContainer {
+	width: 480px;
+	height: 17px;
+	margin: 0px 10px 0px 10px;
+}
+
+#CategorizerProjects div {
+	cursor: pointer;
+	border: lightgray solid 0.75pt;
+	margin: 1px 1px 1px 1px;
+	padding: 1px 1px 1px 1px;
+}
+
+#CategorizerTasks div {
+	cursor: pointer;
+	border: lightgray solid 0.75pt;
+	margin: 1px 1px 1px 1px;
+	padding: 1px 1px 1px 1px;
+}
+
+#SelectedCategories div {
+	cursor: pointer;
+	border: lightgray solid 0.75pt;
+	margin: 1px 1px 1px 1px;
+	padding: 1px 1px 1px 1px;
+}
+
+a.categorizer {
+	cursor: pointer;
+	color: #39668e;
+	text-underline: #39668e;
+	text-decoration: underline;
+}
+
+div.categorizerSave {
+	background-color: white;
+	width: 100%;
+}

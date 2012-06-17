@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using FogBugz.Categorizer.Plugins.Business;
 using FogCreek.Plugins;
 
 // General Information about an assembly is controlled through the following 
@@ -14,7 +14,7 @@ using FogCreek.Plugins;
 [assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyFogCreekPluginIdAttribute("FogBugzCategorizer@arpc.com")]
+[assembly: AssemblyFogCreekPluginIdAttribute(Statics.PluginId)]
 [assembly: AssemblyFogCreekMajorVersionAttribute(3)]
 [assembly: AssemblyFogCreekMinorVersionMinAttribute(50)]
 [assembly: AssemblyFogCreekEmailAddressAttribute("development@arpc.com")]

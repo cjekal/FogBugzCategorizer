@@ -1,3 +1,4 @@
+using FogBugz.Categorizer.Plugins.Business;
 using FogCreek.FogBugz;
 using FogCreek.FogBugz.Plugins.Api;
 using FogCreek.FogBugz.Plugins.Interfaces;
@@ -88,7 +89,7 @@ namespace FogBugzCategorizer.Plugins
 
 		protected virtual string GetPluginTableName(string tableName)
 		{
-			return api.Database.PluginTableName(PLUGIN_ID, tableName);
+			return api.Database.PluginTableName(Statics.PluginId, tableName);
 		}
 	}
 }

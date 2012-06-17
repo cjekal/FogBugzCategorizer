@@ -11,35 +11,44 @@
 		e.preventDefault()
 		$('#CategorizerDiv').toggle()
 		if ($('#CategorizerDiv').is(':visible'))
-			createProjects()
+			loadProjectsAndSelected()
 
 	$('#CategorizerSave').click (e) ->
 		e.preventDefault()
+		$('#CategorizerNotifications').slideDown();
 		$.ajax(
 			type: 'POST',
 			url: settings.url,
 			data: JSON.stringify(
-				Command: 'SaveCategories'
+				Command: 'SaveCategories',
+				BugzId: settings.bugzId,
 				Categories: getSelectedCategories()
 			),
 			contentType: "application/json; charset=utf-8",
-			dataType: 'json',
+			dataType: 'html',
 			success: (result) ->
 				console.log "finished saving categories, got result: #{result}"
+				$('#CategorizerNotifications').slideUp();
 		)
 
-createProjects = ->
-	data = $('#CategorizerDiv').data('projects')
+loadProjectsAndSelected = ->
+	data = $('#CategorizerDiv').data('loadAll')
 	if (data)
 		return
+	$('#CategorizerNotifications').slideDown();
 	$('#CategorizerProjects').empty()
 	$.getJSON(settings.url,
-		Command: 'GetProjects'
+		Command: 'LoadAll',
+		BugzId: settings.bugzId
 	, (json) ->
-		$.each(json, (key, val) ->
+		$.each(json.Projects, (key, val) ->
 			createProjectItem(val).appendTo('#CategorizerProjects')
 		)
-		$('#CategorizerDiv').data('projects', json)
+		$.each(json.Selected, (key, val) ->
+			createSelectedItem(val).appendTo('#SelectedCategories')
+		)
+		$('#CategorizerDiv').data('loadAll', json)
+		$('#CategorizerNotifications').slideUp();
 	)
 
 createProjectItem = (project) ->
@@ -51,6 +60,7 @@ createProjectItem = (project) ->
 		if (data)
 			createTasks(data)
 		else
+			$('#CategorizerNotifications').slideDown();
 			projectObj = $(this)
 			$.getJSON(settings.url,
 				Command: 'GetTasks',
@@ -59,6 +69,7 @@ createProjectItem = (project) ->
 				createTasks(json, ->
 					projectObj.data('tasks', json)
 				)
+				$('#CategorizerNotifications').slideUp();
 			)
 	div
 
@@ -83,6 +94,14 @@ addSelectedTask = (taskObj, task) ->
 	createSelectedProjectTask taskObj, task
 	taskObj.hide()
 
+createSelectedItem = (task) ->
+	div = $('<div />')
+	div.data('task', task)
+	div.html(getProjectTaskText(task)).click (e) ->
+		e.preventDefault()
+		$(this).hide()
+	div.appendTo('#SelectedCategories')
+
 createSelectedProjectTask = (taskObj, task) ->
 	div = $('<div />')
 	div.data('task', task)
@@ -98,5 +117,6 @@ getProjectTaskText = (task) ->
 getSelectedCategories = ->
 	categories = []
 	$('#SelectedCategories div').each ->
-		categories.push($(this).data('task'))
+		if ($(this).is(':visible'))
+			categories.push($(this).data('task'))
 	return categories

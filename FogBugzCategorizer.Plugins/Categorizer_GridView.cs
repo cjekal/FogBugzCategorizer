@@ -1,4 +1,5 @@
 ﻿using System;
+using FogBugz.Categorizer.Plugins.Business;
 using FogCreek.Core;
 using FogCreek.FogBugz;
 using FogCreek.FogBugz.Database;
@@ -13,10 +14,7 @@ namespace FogBugzCategorizer.Plugins
 {
 	public partial class Categorizer : Plugin, IPluginGridColumn, IPluginFilterDisplay, IPluginFilterOptions, IPluginFilterCommit
     {
-		protected const string PLUGIN_ID = "FogBugzCategorizer@arpc.com";
-
-		public Categorizer(CPluginApi api)
-			: base(api)
+		public Categorizer(CPluginApi api) : base(api)
         {
         }
 
@@ -53,7 +51,7 @@ namespace FogBugzCategorizer.Plugins
 
             for (int i = 0; i < rgBug.Length; i++)
             {
-				object value = rgBug[i].GetPluginField(PLUGIN_ID, columnName);
+				object value = rgBug[i].GetPluginField(Statics.PluginId, columnName);
 
 				if (col.iType == 0)
 				{
@@ -124,7 +122,7 @@ namespace FogBugzCategorizer.Plugins
 
 		public string FilterBugEntryUrlParams(CFilter filter)
 		{
-			return api.PluginPrefix + "HoursFilterType=" + filter.GetPluginField(PLUGIN_ID, "HoursFilterType") + "&SplitFilterType=" + filter.GetPluginField(PLUGIN_ID, "SplitFilterType");
+			return api.PluginPrefix + "HoursFilterType=" + filter.GetPluginField(Statics.PluginId, "HoursFilterType") + "&SplitFilterType=" + filter.GetPluginField(Statics.PluginId, "SplitFilterType");
 		}
 
 		#endregion
@@ -253,15 +251,15 @@ namespace FogBugzCategorizer.Plugins
 
 		#region Implementation of IPluginFilterCommit
 
-		protected string preCommitHoursSelection = FilterType.Unset.ToString();
-		protected string preCommitSplitSelection = FilterType.Unset.ToString();
+		protected string PreCommitHoursSelection = FilterType.Unset.ToString();
+		protected string PreCommitSplitSelection = FilterType.Unset.ToString();
 
 		public bool FilterCommitBefore(CFilter filter)
 		{
 			if (api.Request[api.AddPluginPrefix("HoursFilterType")] != null)
 			{
-				var pluginField = filter.GetPluginField(PLUGIN_ID, "HoursFilterType");
-				preCommitHoursSelection = pluginField == null ? "Unset" : pluginField.ToString();
+				var pluginField = filter.GetPluginField(Statics.PluginId, "HoursFilterType");
+				PreCommitHoursSelection = pluginField == null ? "Unset" : pluginField.ToString();
 
 				var newValue = api.Request[api.AddPluginPrefix("HoursFilterType")].ToLower();
 				FilterType type = FilterType.Unset;
@@ -274,13 +272,13 @@ namespace FogBugzCategorizer.Plugins
 						type = FilterType.No;
 						break;
 				}
-				filter.SetPluginField(PLUGIN_ID, "HoursFilterType", type.ToString());
+				filter.SetPluginField(Statics.PluginId, "HoursFilterType", type.ToString());
 			}
 
 			if (api.Request[api.AddPluginPrefix("SplitFilterType")] != null)
 			{
-				var pluginField = filter.GetPluginField(PLUGIN_ID, "SplitFilterType");
-				preCommitSplitSelection = pluginField == null ? "Unset" : pluginField.ToString();
+				var pluginField = filter.GetPluginField(Statics.PluginId, "SplitFilterType");
+				PreCommitSplitSelection = pluginField == null ? "Unset" : pluginField.ToString();
 
 				var newValue = api.Request[api.AddPluginPrefix("SplitFilterType")].ToLower();
 				FilterType type = FilterType.Unset;
@@ -293,7 +291,7 @@ namespace FogBugzCategorizer.Plugins
 						type = FilterType.No;
 						break;
 				}
-				filter.SetPluginField(PLUGIN_ID, "SplitFilterType", type.ToString());
+				filter.SetPluginField(Statics.PluginId, "SplitFilterType", type.ToString());
 			}
 			return true;
 		}
@@ -304,26 +302,26 @@ namespace FogBugzCategorizer.Plugins
 
 		public void FilterCommitRollback(CFilter filter)
 		{
-			filter.SetPluginField(PLUGIN_ID, "HoursFilterType", preCommitHoursSelection);
-			filter.SetPluginField(PLUGIN_ID, "SplitFilterType", preCommitSplitSelection);
+			filter.SetPluginField(Statics.PluginId, "HoursFilterType", PreCommitHoursSelection);
+			filter.SetPluginField(Statics.PluginId, "SplitFilterType", PreCommitSplitSelection);
 		}
 
 		#endregion
     
 		protected virtual FilterType GetHoursFilterType(CFilter filter)
 		{
-			if (filter.GetPluginField(PLUGIN_ID, "HoursFilterType") != null)
+			if (filter.GetPluginField(Statics.PluginId, "HoursFilterType") != null)
 			{
-				return (FilterType)Enum.Parse(typeof(FilterType), Convert.ToString(filter.GetPluginField(PLUGIN_ID, "HoursFilterType")));
+				return (FilterType)Enum.Parse(typeof(FilterType), Convert.ToString(filter.GetPluginField(Statics.PluginId, "HoursFilterType")));
 			}
 			return FilterType.Unset;
 		}
 
 		protected virtual FilterType GetSplitFilterType(CFilter filter)
 		{
-			if (filter.GetPluginField(PLUGIN_ID, "SplitFilterType") != null)
+			if (filter.GetPluginField(Statics.PluginId, "SplitFilterType") != null)
 			{
-				return (FilterType)Enum.Parse(typeof(FilterType), Convert.ToString(filter.GetPluginField(PLUGIN_ID, "SplitFilterType")));
+				return (FilterType)Enum.Parse(typeof(FilterType), Convert.ToString(filter.GetPluginField(Statics.PluginId, "SplitFilterType")));
 			}
 			return FilterType.Unset;
 		}
