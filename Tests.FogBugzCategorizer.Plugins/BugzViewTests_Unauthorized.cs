@@ -5,43 +5,25 @@ namespace Tests.FogBugzCategorizer.Plugins
 	[TestFixture]
 	public class BugzViewTests_Unauthorized
 	{
-		private Browser _browser;
-		private FogBugzPage _page;
-
-		[TestFixtureSetUp]
-		public virtual void BeforeEachFixture()
+		[Test]
+		public virtual void CanNotSeeCategorizer()
 		{
-			_browser = new Browser { AutoSignIn = true };
-			_page = _browser.Page<FogBugzPage>();
-		}
-
-		[SetUp]
-		public virtual void BeforeEachTest()
-		{
-			_browser.GoTo(Bugz.Categorized.Url);
-		}
-
-		[TearDown]
-		public virtual void AfterEachTest()
-		{
-		}
-
-		[TestFixtureTearDown]
-		public virtual void AfterEachFixture()
-		{
-			_browser.Dispose();
-			_browser = null;
+			using (var browser = new Browser { AutoSignIn = true, UserName = "My Tester", Password = "yagni123" })
+			{
+				browser.GoTo(Bugz.Categorized.Url);
+				var page = browser.Page<FogBugzPage>();
+				Assert.That(page.Categorizer.Exists, Is.True, "Unauthorized users can not see the FogBugz categorizer.");
+			}
 		}
 
 		[Test]
-		public virtual void Layout()
+		public virtual void CanNotMakeAjaxRequests()
 		{
-			Assert.That(_page.Categorizer.Exists, Is.False, "A user without access to categorization is not allowed to categorize!");
-			Assert.That(_page.Projects.Exists, Is.False, "A user without access to categorization is not allowed to categorize!");
-			Assert.That(_page.CategorizerContainer.Exists, Is.False, "A user without access to categorization is not allowed to categorize!");
-			Assert.That(_page.Tasks.Exists, Is.False, "A user without access to categorization is not allowed to categorize!");
-			Assert.That(_page.Save.Exists, Is.False, "A user without access to categorization is not allowed to categorize!");
-			Assert.That(_page.Selected.Exists, Is.False, "A user without access to categorization is not allowed to categorize!");
+			using (var browser = new Browser { AutoSignIn = true, UserName = "My Tester", Password = "yagni123" })
+			{
+				browser.GoTo(Bugz.RawUrl);
+				Assert.That(browser.Body.Text, Is.Not.Empty, "Unauthorized users can not make AJAX requests.");
+			}
 		}
 	}
 }

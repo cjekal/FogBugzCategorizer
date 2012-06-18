@@ -1,3 +1,5 @@
+using FogCreek.FogBugz.Plugins.Api;
+
 namespace FogBugz.Categorizer.Plugins.Business
 {
 	public class Tables
@@ -8,5 +10,10 @@ namespace FogBugz.Categorizer.Plugins.Business
 		public const string SPLIT_TABLE = "ARPC_SPLIT";
 		public const string SPLIT_DETAILS_TABLE = "ARPC_SPLIT_DETAILS";
 		public const string PROJECT_TASK_LOOKUP = "ARPC_PROJECT_TASK_LOOKUP";
+
+		public static string GetPluginTableName(CPluginApi api, string tableName)
+		{
+			return api.Database.PluginTableName(Statics.PluginId, tableName);
+		}
 	}
 }

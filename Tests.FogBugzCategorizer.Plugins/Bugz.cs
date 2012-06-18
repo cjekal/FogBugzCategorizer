@@ -12,6 +12,8 @@ namespace Tests.FogBugzCategorizer.Plugins
 		{
 		}
 		
+		public static string RawUrl{ get { return "http://localhost/fogbugz/default.asp?pg=pgPluginRaw&ixPlugin=25&Command=LoadAll"; } }
+
 		public static Bugz Categorized
 		{
 			get

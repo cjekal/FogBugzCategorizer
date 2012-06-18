@@ -49,9 +49,11 @@
     <Compile Include="Browser.cs" />
     <Compile Include="Bugz.cs" />
     <Compile Include="BugzViewTests.cs" />
+    <Compile Include="BugzViewTests_Authorized.cs" />
     <Compile Include="BugzViewTests_EdgeCases.cs" />
     <Compile Include="BugzViewTests_NewCase.cs" />
     <Compile Include="BugzViewTests_Unauthorized.cs" />
+    <Compile Include="CategorizerFormsTests.cs" />
     <Compile Include="FogBugzDB.cs" />
     <Compile Include="FogBugzPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -65,6 +67,10 @@
     <ProjectReference Include="..\FogBugz.Categorizer.Plugins.Business\FogBugz.Categorizer.Plugins.Business.csproj">
       <Project>{D5D76BD4-2D3B-4410-9B35-821E42B7033B}</Project>
       <Name>FogBugz.Categorizer.Plugins.Business</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FogBugzCategorizer.Plugins\FogBugzCategorizer.Plugins.csproj">
+      <Project>{759E75F7-0817-4187-BABE-45B311974D87}</Project>
+      <Name>FogBugzCategorizer.Plugins</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

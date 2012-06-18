@@ -42,10 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataProviders\ProjectsProvider.cs" />
+    <Compile Include="DataProviders\TasksProvider.cs" />
     <Compile Include="FilterType.cs" />
     <Compile Include="LoadAllResponse.cs" />
     <Compile Include="Project.cs" />
-    <Compile Include="ProjectProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="Tables.cs" />

@@ -89,7 +89,7 @@ namespace FogBugzCategorizer.Plugins
 
 		protected virtual string GetPluginTableName(string tableName)
 		{
-			return api.Database.PluginTableName(Statics.PluginId, tableName);
+			return Tables.GetPluginTableName(api, tableName);
 		}
 	}
 }

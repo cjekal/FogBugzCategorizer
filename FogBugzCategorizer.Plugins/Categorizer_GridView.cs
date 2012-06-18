@@ -5,7 +5,6 @@ using FogCreek.FogBugz;
 using FogCreek.FogBugz.Database;
 using FogCreek.FogBugz.Database.Entity;
 using FogCreek.FogBugz.Plugins;
-using FogCreek.FogBugz.Plugins.Api;
 using FogCreek.FogBugz.Plugins.Entity;
 using FogCreek.FogBugz.Plugins.Interfaces;
 using FogCreek.FogBugz.UI.Dialog;
@@ -14,11 +13,7 @@ namespace FogBugzCategorizer.Plugins
 {
 	public partial class Categorizer : Plugin, IPluginGridColumn, IPluginFilterDisplay, IPluginFilterOptions, IPluginFilterCommit
     {
-		public Categorizer(CPluginApi api) : base(api)
-        {
-        }
-
-        #region IPluginGridColumn Members
+		#region IPluginGridColumn Members
 
         public CGridColumn[] GridColumns()
         {

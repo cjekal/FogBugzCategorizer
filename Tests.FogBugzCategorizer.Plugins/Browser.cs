@@ -20,11 +20,28 @@ namespace Tests.FogBugzCategorizer.Plugins
 
 			if (AutoSignIn && IsOnLoginPage)
 			{
-				TextField("sPerson").TypeText(UserName);
-				TextField(Find.ByName("sPassword")).TypeText(Password);
-				Button("Button_OK").Click();
+				SignIn();
 				base.GoTo(url);
 			}
+		}
+
+		public void SignIn()
+		{
+			if (Span("username").Text == UserName)
+			{
+				return;
+			}
+
+			LogOff();
+
+			TextField("sPerson").TypeText(UserName);
+			TextField(Find.ByName("sPassword")).TypeText(Password);
+			Button("Button_OK").Click();
+		}
+
+		public void LogOff()
+		{
+			base.GoTo("http://localhost/fogbugz/default.asp?pre=preLogOff");
 		}
 
 		public bool IsOnLoginPage { get { return Span("usertype").Exists && Span("usertype").Text == "(Not logged on)"; } }
