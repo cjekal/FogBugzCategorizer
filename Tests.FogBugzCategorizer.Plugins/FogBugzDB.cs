@@ -32,6 +32,11 @@ insert Plugin_25_ARPC_SPLIT_DETAILS (Id, SplitId, Project, Task) values (10, 1, 
 insert Plugin_25_ARPC_SPLIT_DETAILS (Id, SplitId, Project, Task) values (11, 1, 'AC&S-003 Accounting', 'Reporting')
 insert Plugin_25_ARPC_SPLIT_DETAILS (Id, SplitId, Project, Task) values (12, 1, 'AC&S-003 Accounting', 'Tax')
 set identity_insert Plugin_25_ARPC_SPLIT_DETAILS off
+
+delete PluginKeyValue where ixPlugin = 25
+set identity_insert PluginKeyValue on
+insert PluginKeyValue (ixPluginKeyValue, ixPlugin, sKey, sValue) values (9, 25, 'AuthorizedCategorizers', '[""Administrator"",""Mark King""]')
+set identity_insert PluginKeyValue off
 ";
 
 			using(var connection = new SqlConnection(ConfigurationManager.ConnectionStrings["fogbugz"].ConnectionString))
