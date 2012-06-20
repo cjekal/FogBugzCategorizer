@@ -1,4 +1,11 @@
-﻿$ ->
+﻿#for some reason, CoffeeScript hates having this "unless console" block as the first line... causes IDENT error on line 2 where i set the console object so instead resorting to this hack of having the 1st line as a comment.
+unless console
+	console =
+		messages: []
+		log: (msg) ->
+			@messages.push(msg)
+
+$ ->
 	$.ajaxSetup(
 		cache: false
 	)
@@ -41,6 +48,7 @@ loadProjectsAndSelected = ->
 		Command: 'LoadAll',
 		BugzId: settings.bugzId
 	, (json) ->
+		console.log "finished getting LoadAll, got result: #{JSON.stringify(json)}"
 		$.each(json.Projects, (key, val) ->
 			createProjectItem(val).appendTo('#CategorizerProjects')
 		)
@@ -66,6 +74,7 @@ createProjectItem = (project) ->
 				Command: 'GetTasks',
 				Project: projectObj.html()
 			, (json) ->
+				console.log "finished getting GetTasks, got result: #{JSON.stringify(json)}"
 				createTasks(json, ->
 					projectObj.data('tasks', json)
 				)
