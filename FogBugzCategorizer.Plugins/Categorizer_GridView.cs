@@ -1,6 +1,5 @@
 ﻿using System;
 using FogBugz.Categorizer.Plugins.Business;
-using FogCreek.Core;
 using FogCreek.FogBugz;
 using FogCreek.FogBugz.Database;
 using FogCreek.FogBugz.Database.Entity;
@@ -50,7 +49,7 @@ namespace FogBugzCategorizer.Plugins
 
 				if (col.iType == 0)
 				{
-					valuesAsStrings[i] = (value == null) ? string.Empty : Html.Encode(Convert.ToDecimal(value).ToString("#,###.0"));
+					valuesAsStrings[i] = (value == null) ? "No" : "Yes";
 				}
 				else
 				{
