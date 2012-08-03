@@ -90,8 +90,7 @@ loadProjectsAndSelectedAndTemplates = function() {
       return createSelectedItem(val).appendTo('#SelectedCategories');
     });
     $.each(json.Templates, function(key, val) {
-      createTemplateItem(val);
-      return $('#selectedTemplate').DLCL();
+      return createTemplateItem(val);
     });
     $('#CategorizerDiv').data('loadAll', json);
     return $('#CategorizerNotifications').slideUp();

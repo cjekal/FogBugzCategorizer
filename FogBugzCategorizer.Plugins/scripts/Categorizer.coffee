@@ -83,7 +83,6 @@ loadProjectsAndSelectedAndTemplates = ->
 		)
 		$.each(json.Templates, (key, val) ->
 			createTemplateItem(val)
-			$('#selectedTemplate').DLCL()
 		)
 		$('#CategorizerDiv').data('loadAll', json)
 		$('#CategorizerNotifications').slideUp();
