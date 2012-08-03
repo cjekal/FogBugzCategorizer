@@ -18,7 +18,7 @@ $ ->
 		e.preventDefault()
 		$('#CategorizerDiv').toggle()
 		if ($('#CategorizerDiv').is(':visible'))
-			loadProjectsAndSelected()
+			loadProjectsAndSelectedAndTemplates()
 
 	$('#CategorizerSave').click (e) ->
 		e.preventDefault()
@@ -31,14 +31,40 @@ $ ->
 				BugzId: settings.bugzId,
 				Categories: getSelectedCategories()
 			),
-			contentType: "application/json; charset=utf-8",
+			contentType: 'application/json; charset=utf-8',
 			dataType: 'html',
 			success: (result) ->
 				console.log "finished saving categories, got result: #{result}"
 				$('#CategorizerNotifications').slideUp();
 		)
 
-loadProjectsAndSelected = ->
+	$('#TemplateSave').click (e) ->
+		e.preventDefault()
+
+		console.log($('#newTemplateName').val())
+
+		if ($('#newTemplateName').val() == '')
+			alert("template name required! All i got wuz #{$('#newTemplateName').val()}")
+			return false
+
+		$('#CategorizerNotifications').slideDown();
+
+		$.ajax(
+			type: 'POST',
+			url: settings.url,
+			data: JSON.stringify(
+				Command: 'SaveTemplate',
+				Name: $('#newTemplateName').val(),
+				Categories: getSelectedCategories()
+			),
+			contentType: 'application/json; charset=utf-8',
+			dataType: 'html',
+			success: (result) ->
+				console.log "finished saving template, got result: #{result}"
+				$('#CategorizerNotifications').slideUp();
+		)
+
+loadProjectsAndSelectedAndTemplates = ->
 	data = $('#CategorizerDiv').data('loadAll')
 	if (data)
 		return
@@ -54,6 +80,10 @@ loadProjectsAndSelected = ->
 		)
 		$.each(json.Selected, (key, val) ->
 			createSelectedItem(val).appendTo('#SelectedCategories')
+		)
+		$.each(json.Templates, (key, val) ->
+			createTemplateItem(val)
+			$('#selectedTemplate').DLCL()
 		)
 		$('#CategorizerDiv').data('loadAll', json)
 		$('#CategorizerNotifications').slideUp();
@@ -110,6 +140,11 @@ createSelectedItem = (task) ->
 		e.preventDefault()
 		$(this).hide()
 	div.appendTo('#SelectedCategories')
+
+createTemplateItem = (template) ->
+	$('#selectedTemplate').append($('<option>',
+		value: template.Name
+	).text(template.Name).data('template', template))
 
 createSelectedProjectTask = (taskObj, task) ->
 	div = $('<div />')

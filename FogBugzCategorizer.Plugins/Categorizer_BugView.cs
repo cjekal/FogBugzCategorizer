@@ -99,7 +99,8 @@ namespace FogBugzCategorizer.Plugins
 				var projects = _projectsProvider.GetAll(api);
 				var bugzId = Convert.ToInt32(api.Request["BugzId"]);
 				var selected = _tasksProvider.GetSelected(api, bugzId);
-				return JsonConvert.SerializeObject(new LoadAllResponse{ Projects = projects, Selected = selected });
+				var templates = _tasksProvider.GetTemplates(api);
+				return JsonConvert.SerializeObject(new LoadAllResponse{ Projects = projects, Selected = selected, Templates = templates });
 			}
 
 			if (api.Request["Command"] == "GetTasks")
@@ -122,6 +123,17 @@ namespace FogBugzCategorizer.Plugins
 					_tasksProvider.SaveSelected(api, bugzId, tasks, UserName);
 
 					return "yay, done updating!";
+				}
+				if ((string) json["Command"] == "SaveTemplate")
+				{
+					var templateName = (string) json["Name"];
+					
+					var fragments = json["Categories"].Children();
+					var tasks = fragments.Select(f => JsonConvert.DeserializeObject<Task>(f.ToString())).ToList();
+
+					_tasksProvider.SaveTemplate(api, templateName, tasks, UserName);
+
+					return "yay, done creating template!";
 				}
 				return null;
 			}

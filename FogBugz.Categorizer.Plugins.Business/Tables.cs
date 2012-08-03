@@ -10,6 +10,8 @@ namespace FogBugz.Categorizer.Plugins.Business
 		public const string SPLIT_TABLE = "ARPC_SPLIT";
 		public const string SPLIT_DETAILS_TABLE = "ARPC_SPLIT_DETAILS";
 		public const string PROJECT_TASK_LOOKUP = "ARPC_PROJECT_TASK_LOOKUP";
+		public const string TEMPLATE_TABLE = "ARPC_TEMPLATES";
+		public const string TEMPLATE_DETAILS_TABLE = "ARPC_TEMPLATE_DETAILS";
 
 		public static string GetPluginTableName(CPluginApi api, string tableName)
 		{

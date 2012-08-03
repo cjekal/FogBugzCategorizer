@@ -55,7 +55,20 @@ namespace FogBugzCategorizer.Plugins
 			splitDetailsTable.AddVarcharColumn("Task", 255, false);
 			splitDetailsTable.AddAutoIncrementPrimaryKey("Id");
 
-			return new[] { hoursTable, splitTable, hasHoursFilterTable, hasSplitFilterTable, projectTaskLookup, splitDetailsTable };
+			CTable templateTable = api.Database.NewTable(GetPluginTableName(Tables.TEMPLATE_TABLE));
+			templateTable.sDesc = "Templates";
+			templateTable.AddVarcharColumn("Name", 255, false);
+			templateTable.AddVarcharColumn("LastEditor", 255, false);
+			templateTable.AddAutoIncrementPrimaryKey("Id");
+
+			CTable templateDetailsTable = api.Database.NewTable(GetPluginTableName(Tables.TEMPLATE_DETAILS_TABLE));
+			templateDetailsTable.sDesc = "Template Project-Tasks";
+			templateDetailsTable.AddIntColumn("TemplateId", false);
+			templateDetailsTable.AddVarcharColumn("Project", 255, false);
+			templateDetailsTable.AddVarcharColumn("Task", 255, false);
+			templateDetailsTable.AddAutoIncrementPrimaryKey("Id");
+
+			return new[] { hoursTable, splitTable, hasHoursFilterTable, hasSplitFilterTable, projectTaskLookup, splitDetailsTable, templateTable, templateDetailsTable };
 		}
 
 		public void DatabaseUpgradeBefore(int ixVersionFrom, int ixVersionTo, CDatabaseUpgradeApi apiUpgrade)
@@ -81,7 +94,6 @@ namespace FogBugzCategorizer.Plugins
 
 		public string[] FilterJoinTables()
 		{
-			//return null;
 			return new[] { Tables.HOURS_FILTER_TABLE, Tables.SPLIT_FILTER_TABLE };
 		}
 
