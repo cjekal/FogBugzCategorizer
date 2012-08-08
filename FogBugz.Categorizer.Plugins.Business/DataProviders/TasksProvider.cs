@@ -79,55 +79,5 @@ namespace FogBugz.Categorizer.Plugins.Business.DataProviders
 				taskInsertQuery.Execute();
 			}
 		}
-
-		public void SaveTemplate(CPluginApi api, string templateName, List<Task> tasks, string userName)
-		{
-			var templateTableName = api.Database.PluginTableName(Statics.PluginId, Tables.TEMPLATE_TABLE);
-			var templateDetailsTableName = api.Database.PluginTableName(Statics.PluginId, Tables.TEMPLATE_DETAILS_TABLE);
-
-			var templateQuery = api.Database.NewSelectQuery(templateTableName);
-			templateQuery.AddWhere(string.Format("{0}.Name = '{1}'", templateTableName, templateName));
-			var templateData = templateQuery.GetDataSet();
-
-			int templateId;
-			if (templateData.Tables[0].Rows.Count == 0)
-			{
-				var insertTemplateQuery = api.Database.NewInsertQuery(templateTableName);
-				insertTemplateQuery.InsertString("Name", templateName);
-				insertTemplateQuery.InsertString("LastEditor", userName);
-				templateId = insertTemplateQuery.Execute();
-			}
-			else
-			{
-				var updateTemplateQuery = api.Database.NewUpdateQuery(templateTableName);
-				updateTemplateQuery.UpdateString("LastEditor", userName);
-				updateTemplateQuery.AddWhere(string.Format("{0}.Name = '{1}'", templateTableName, templateName));
-				updateTemplateQuery.Execute();
-
-				templateId = templateData.Tables[0].Rows[0].Field<int>("Id");
-				var deleteAllTemplateDetailsQuery = api.Database.NewDeleteQuery(templateDetailsTableName);
-				deleteAllTemplateDetailsQuery.AddWhere(string.Format("{0}.TemplateId = {1}", templateDetailsTableName, templateId));
-				deleteAllTemplateDetailsQuery.Execute();
-			}
-			
-			foreach (var task in tasks.Distinct())
-			{
-				var taskInsertQuery = api.Database.NewInsertQuery(templateDetailsTableName);
-				taskInsertQuery.InsertInt("TemplateId", templateId);
-				taskInsertQuery.InsertString("Project", task.Project.Name);
-				taskInsertQuery.InsertString("Task", task.Name);
-				taskInsertQuery.Execute();
-			}
-		}
-
-		public List<Template> GetTemplates(CPluginApi api)
-		{
-			var templatesTableName = Tables.GetPluginTableName(api, Tables.TEMPLATE_TABLE);
-			var templatesQuery = api.Database.NewSelectQuery(templatesTableName);
-			templatesQuery.Distinct = true;
-			var templatesData = templatesQuery.GetDataSet();
-
-			return new List<Template>(templatesData.Tables[0].AsEnumerable().Select(r => new Template { Name = r.Field<string>("Name") }));
-		}
 	}
 }

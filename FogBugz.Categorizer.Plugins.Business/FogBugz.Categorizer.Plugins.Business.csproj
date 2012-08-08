@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="DataProviders\ProjectsProvider.cs" />
     <Compile Include="DataProviders\TasksProvider.cs" />
+    <Compile Include="DataProviders\TemplatesProvider.cs" />
     <Compile Include="FilterType.cs" />
     <Compile Include="LoadAllResponse.cs" />
     <Compile Include="Project.cs" />

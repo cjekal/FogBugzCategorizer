@@ -19,16 +19,18 @@ namespace FogBugzCategorizer.Plugins
 	{
 		private readonly ProjectsProvider _projectsProvider;
 		private readonly TasksProvider _tasksProvider;
+		private readonly TemplatesProvider _templatesProvider;
 		private List<string> _authorizedCategorizers;
 
-		public Categorizer(CPluginApi api) : this(api, new ProjectsProvider(), new TasksProvider()) 
+		public Categorizer(CPluginApi api) : this(api, new ProjectsProvider(), new TasksProvider(), new TemplatesProvider()) 
 		{
 		}
 
-		public Categorizer(CPluginApi api, ProjectsProvider projectsProvider, TasksProvider tasksProvider) : base(api)
+		public Categorizer(CPluginApi api, ProjectsProvider projectsProvider, TasksProvider tasksProvider, TemplatesProvider templatesProvider) : base(api)
 		{
 			_projectsProvider = projectsProvider;
 			_tasksProvider = tasksProvider;
+			_templatesProvider = templatesProvider;
 		}
 
 		#region Implementation of IPluginBugDisplay
@@ -96,11 +98,21 @@ namespace FogBugzCategorizer.Plugins
 
 			if (api.Request["Command"] == "LoadAll")
 			{
-				var projects = _projectsProvider.GetAll(api);
-				var bugzId = Convert.ToInt32(api.Request["BugzId"]);
-				var selected = _tasksProvider.GetSelected(api, bugzId);
-				var templates = _tasksProvider.GetTemplates(api);
-				return JsonConvert.SerializeObject(new LoadAllResponse{ Projects = projects, Selected = selected, Templates = templates });
+				if (Convert.ToBoolean(api.Request["TemplateChanged"]))
+				{
+					var projects = _projectsProvider.GetAll(api);
+					var templateName = api.Request["TemplateName"];
+					var selected = _templatesProvider.GetTemplateTasks(api, templateName);
+					return JsonConvert.SerializeObject(new LoadAllResponse {Projects = projects, Selected = selected});
+				}
+				else
+				{
+					var projects = _projectsProvider.GetAll(api);
+					var bugzId = Convert.ToInt32(api.Request["BugzId"]);
+					var selected = _tasksProvider.GetSelected(api, bugzId);
+					var templates = _templatesProvider.GetTemplates(api);
+					return JsonConvert.SerializeObject(new LoadAllResponse {Projects = projects, Selected = selected, Templates = templates});
+				}
 			}
 
 			if (api.Request["Command"] == "GetTasks")
@@ -131,7 +143,7 @@ namespace FogBugzCategorizer.Plugins
 					var fragments = json["Categories"].Children();
 					var tasks = fragments.Select(f => JsonConvert.DeserializeObject<Task>(f.ToString())).ToList();
 
-					_tasksProvider.SaveTemplate(api, templateName, tasks, UserName);
+					_templatesProvider.SaveTemplate(api, templateName, tasks, UserName);
 
 					return "yay, done creating template!";
 				}

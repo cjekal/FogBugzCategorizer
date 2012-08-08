@@ -18,7 +18,7 @@ $ ->
 		e.preventDefault()
 		$('#CategorizerDiv').toggle()
 		if ($('#CategorizerDiv').is(':visible'))
-			loadProjectsAndSelectedAndTemplates()
+			loadProjectsAndSelected()
 
 	$('#CategorizerSave').click (e) ->
 		e.preventDefault()
@@ -64,29 +64,49 @@ $ ->
 				$('#CategorizerNotifications').slideUp();
 		)
 
-loadProjectsAndSelectedAndTemplates = ->
-	data = $('#CategorizerDiv').data('loadAll')
-	if (data)
-		return
+loadProjectsAndSelected = (isTemplateChanged, templateName) ->
+	if (isTemplateChanged)
+		$('#CategorizerTasks').empty()
+		$('#SelectedCategories').empty()
+		$('#CategorizerDiv').data('loadAll', null)
+	else
+		data = $('#CategorizerDiv').data('loadAll')
+		if (data && !isTemplateChanged)
+			return
 	$('#CategorizerNotifications').slideDown();
 	$('#CategorizerProjects').empty()
 	$.getJSON(settings.url,
 		Command: 'LoadAll',
-		BugzId: settings.bugzId
+		BugzId: settings.bugzId,
+		TemplateChanged: isTemplateChanged,
+		TemplateName: templateName
 	, (json) ->
 		console.log "finished getting LoadAll, got result: #{JSON.stringify(json)}"
+
+		if (!isTemplateChanged)
+			createTemplateDropdown($('#TemplateDropdownContainer'))
+
 		$.each(json.Projects, (key, val) ->
 			createProjectItem(val).appendTo('#CategorizerProjects')
 		)
 		$.each(json.Selected, (key, val) ->
 			createSelectedItem(val).appendTo('#SelectedCategories')
 		)
-		$.each(json.Templates, (key, val) ->
-			createTemplateItem(val)
-		)
+
+		if (!isTemplateChanged)
+			$.each(json.Templates, (key, val) ->
+				createTemplateItem(val)
+			)
+
 		$('#CategorizerDiv').data('loadAll', json)
 		$('#CategorizerNotifications').slideUp();
 	)
+
+createTemplateDropdown = (container) ->
+	$('<select id="selectedTemplate" name="selectedTemplate" style="display: block; visibility: visible;" />').appendTo(container).change (e) ->
+		e.preventDefault()
+		console.log "changed template selection, new selected is #{$(this).val()}"
+		loadProjectsAndSelected(true, $(this).val())
 
 createProjectItem = (project) ->
 	div = $('<div />')
