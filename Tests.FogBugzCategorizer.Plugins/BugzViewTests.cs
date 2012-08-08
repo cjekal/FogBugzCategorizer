@@ -46,13 +46,6 @@ namespace Tests.FogBugzCategorizer.Plugins
 		}
 
 		[Test]
-		public virtual void CategorizerLinksDoNotHaveDefaultActionBecauseInternetExplorer9WillNotPreventDefaultUntilTheDeveloperToolbarConsoleIsRunOrQuirksModeIsTurnedOn()
-		{
-			Assert.That(_page.Categorizer.Url, Is.Empty);
-			Assert.That(_page.Save.Url, Is.Empty);
-		}
-
-		[Test]
 		public virtual void CategorizerIsAnAccordian()
 		{
 			_page.Categorizer.Click();

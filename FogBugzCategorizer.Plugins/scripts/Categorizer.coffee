@@ -1,16 +1,8 @@
-﻿#for some reason, CoffeeScript hates having this "unless console" block as the first line... causes IDENT error on line 2 where i set the console object so instead resorting to this hack of having the 1st line as a comment.
-unless console
-	console =
-		messages: []
-		log: (msg) ->
-			@messages.push(msg)
-
+﻿#Seems like the first line can't be real code, or at least a function, so using this first-line comment hack.
 $ ->
 	$.ajaxSetup(
 		cache: false
 	)
-
-	console.log "jQuery version: #{$().jquery}"
 
 	$('#CategorizerDiv').hide()
 
@@ -34,17 +26,14 @@ $ ->
 			contentType: 'application/json; charset=utf-8',
 			dataType: 'html',
 			success: (result) ->
-				console.log "finished saving categories, got result: #{result}"
 				$('#CategorizerNotifications').slideUp();
 		)
 
 	$('#TemplateSave').click (e) ->
 		e.preventDefault()
 
-		console.log($('#newTemplateName').val())
-
 		if ($('#newTemplateName').val() == '')
-			alert("template name required! All i got wuz #{$('#newTemplateName').val()}")
+			alert('template name required!')
 			return false
 
 		$('#CategorizerNotifications').slideDown();
@@ -60,7 +49,6 @@ $ ->
 			contentType: 'application/json; charset=utf-8',
 			dataType: 'html',
 			success: (result) ->
-				console.log "finished saving template, got result: #{result}"
 				$('#CategorizerNotifications').slideUp();
 		)
 
@@ -81,8 +69,6 @@ loadProjectsAndSelected = (isTemplateChanged, templateName) ->
 		TemplateChanged: isTemplateChanged,
 		TemplateName: templateName
 	, (json) ->
-		console.log "finished getting LoadAll, got result: #{JSON.stringify(json)}"
-
 		if (!isTemplateChanged)
 			createTemplateDropdown($('#TemplateDropdownContainer'))
 
@@ -105,7 +91,6 @@ loadProjectsAndSelected = (isTemplateChanged, templateName) ->
 createTemplateDropdown = (container) ->
 	$('<select id="selectedTemplate" name="selectedTemplate" style="display: block; visibility: visible;" />').appendTo(container).change (e) ->
 		e.preventDefault()
-		console.log "changed template selection, new selected is #{$(this).val()}"
 		loadProjectsAndSelected(true, $(this).val())
 
 createProjectItem = (project) ->
@@ -123,7 +108,6 @@ createProjectItem = (project) ->
 				Command: 'GetTasks',
 				Project: projectObj.html()
 			, (json) ->
-				console.log "finished getting GetTasks, got result: #{JSON.stringify(json)}"
 				createTasks(json, ->
 					projectObj.data('tasks', json)
 				)
